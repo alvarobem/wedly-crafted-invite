@@ -73,15 +73,6 @@ export const RSVPForm = () => {
 
   const [responses, setResponses] = useState<Record<string, any>>({});
 
-  const addGuestGroup = () => {
-    const newGroup: GuestGroup = {
-      id: Date.now().toString(),
-      groupName: `Grupo ${guestGroups.length + 1}`,
-      guests: [{ id: Date.now().toString(), name: '', attending: true }]
-    };
-    setGuestGroups([...guestGroups, newGroup]);
-  };
-
   const removeGuestGroup = (groupId: string) => {
     setGuestGroups(guestGroups.filter(group => group.id !== groupId));
   };
@@ -305,16 +296,6 @@ export const RSVPForm = () => {
                   </Button>
                 </div>
               ))}
-              
-              <Button 
-                type="button" 
-                variant="outline-romantic" 
-                onClick={addGuestGroup}
-                className="w-full"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Añadir nuevo grupo
-              </Button>
             </CardContent>
           </Card>
 
