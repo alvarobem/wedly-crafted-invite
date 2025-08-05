@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      guests: {
+        Row: {
+          attending: boolean | null
+          bus_departure: string | null
+          bus_return: string | null
+          created_at: string
+          group_name: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          attending?: boolean | null
+          bus_departure?: string | null
+          bus_return?: string | null
+          created_at?: string
+          group_name: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          attending?: boolean | null
+          bus_departure?: string | null
+          bus_return?: string | null
+          created_at?: string
+          group_name?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
