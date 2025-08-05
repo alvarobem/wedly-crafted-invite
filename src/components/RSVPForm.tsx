@@ -51,13 +51,20 @@ export const RSVPForm = () => {
     },
     {
       id: '2',
-      type: 'checkbox',
-      question: '¿Participarás en las siguientes actividades?',
-      options: ['Ceremonia', 'Cóctel', 'Cena', 'Fiesta'],
-      required: false
+      type: 'select',
+      question: '¿Utilizarás el bus para la salida?',
+      options: ['No necesito bus', 'Salida desde Móstoles', 'Salida desde Madrid'],
+      required: true
     },
     {
       id: '3',
+      type: 'select',
+      question: '¿Utilizarás el bus para la vuelta?',
+      options: ['No necesito bus', 'Vuelta a Móstoles', 'Vuelta a Madrid'],
+      required: true
+    },
+    {
+      id: '4',
       type: 'textarea',
       question: '¿Hay algo especial que quieras compartir con nosotros?',
       required: false
