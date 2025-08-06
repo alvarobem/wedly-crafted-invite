@@ -20,9 +20,11 @@ export type Database = {
           bus_departure: string | null
           bus_return: string | null
           created_at: string
+          dietary_restrictions: string | null
           group_name: string
           id: string
           name: string
+          special_notes: string | null
           updated_at: string
         }
         Insert: {
@@ -30,9 +32,11 @@ export type Database = {
           bus_departure?: string | null
           bus_return?: string | null
           created_at?: string
+          dietary_restrictions?: string | null
           group_name: string
           id?: string
           name: string
+          special_notes?: string | null
           updated_at?: string
         }
         Update: {
@@ -40,9 +44,11 @@ export type Database = {
           bus_departure?: string | null
           bus_return?: string | null
           created_at?: string
+          dietary_restrictions?: string | null
           group_name?: string
           id?: string
           name?: string
+          special_notes?: string | null
           updated_at?: string
         }
         Relationships: []
