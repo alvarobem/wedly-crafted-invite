@@ -26,6 +26,7 @@ interface GuestData {
   name: string;
   attending: boolean;
   dietaryRestrictions: string;
+  dietaryRestrictionsOther: string;
   busDeparture: string;
   busReturn: string;
   specialNotes: string;
@@ -34,7 +35,8 @@ interface GuestData {
 export const RSVPForm = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [foundGuests, setFoundGuests] = useState<DBGuest[]>([]);
+  const [foundGroups, setFoundGroups] = useState<{[groupName: string]: DBGuest[]}>({});
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
   const [isSearching, setIsSearching] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -47,7 +49,8 @@ export const RSVPForm = () => {
 
   const searchGuests = async (query: string) => {
     if (query.length < 3) {
-      setFoundGuests([]);
+      setFoundGroups({});
+      setSelectedGroup("");
       return;
     }
 
@@ -56,8 +59,7 @@ export const RSVPForm = () => {
       const { data, error } = await supabase
         .from('guests')
         .select('*')
-        .ilike('name', `%${query}%`)
-        .limit(1);
+        .ilike('name', `%${query}%`);
 
       if (error) {
         console.error('Search error:', error);
@@ -65,21 +67,35 @@ export const RSVPForm = () => {
       }
 
       if (data && data.length > 0) {
-        // Get all guests from the same group
-        const { data: groupGuests, error: groupError } = await supabase
-          .from('guests')
-          .select('*')
-          .eq('group_name', data[0].group_name)
-          .order('name');
+        // Group guests by group_name
+        const groupedGuests: {[groupName: string]: DBGuest[]} = {};
+        
+        for (const guest of data) {
+          if (!groupedGuests[guest.group_name]) {
+            // Get all guests from this group
+            const { data: groupGuests, error: groupError } = await supabase
+              .from('guests')
+              .select('*')
+              .eq('group_name', guest.group_name)
+              .order('name');
 
-        if (groupError) {
-          console.error('Group search error:', groupError);
-          return;
+            if (!groupError && groupGuests) {
+              groupedGuests[guest.group_name] = groupGuests;
+            }
+          }
         }
 
-        setFoundGuests(groupGuests || []);
+        setFoundGroups(groupedGuests);
+        // Auto-select if only one group found
+        const groupNames = Object.keys(groupedGuests);
+        if (groupNames.length === 1) {
+          setSelectedGroup(groupNames[0]);
+        } else {
+          setSelectedGroup("");
+        }
       } else {
-        setFoundGuests([]);
+        setFoundGroups({});
+        setSelectedGroup("");
       }
     } catch (error) {
       console.error('Search error:', error);
@@ -97,11 +113,15 @@ export const RSVPForm = () => {
   }, [searchQuery]);
 
   const startWizard = () => {
-    const initialData = foundGuests.map(guest => ({
+    if (!selectedGroup || !foundGroups[selectedGroup]) return;
+    
+    const selectedGuests = foundGroups[selectedGroup];
+    const initialData = selectedGuests.map(guest => ({
       id: guest.id,
       name: guest.name,
       attending: guest.attending !== null ? guest.attending : true,
-      dietaryRestrictions: guest.dietary_restrictions || "",
+      dietaryRestrictions: guest.dietary_restrictions || "none",
+      dietaryRestrictionsOther: "",
       busDeparture: guest.bus_departure || "none",
       busReturn: guest.bus_return || "none",
       specialNotes: guest.special_notes || ""
@@ -151,11 +171,15 @@ export const RSVPForm = () => {
     try {
       // Update all guests in the database
       for (const guest of guestData) {
+        const finalDietaryRestrictions = guest.dietaryRestrictions === "other" 
+          ? guest.dietaryRestrictionsOther 
+          : guest.dietaryRestrictions === "none" ? null : guest.dietaryRestrictions;
+
         const { error } = await supabase
           .from('guests')
           .update({
             attending: guest.attending,
-            dietary_restrictions: guest.dietaryRestrictions || null,
+            dietary_restrictions: finalDietaryRestrictions || null,
             bus_departure: guest.busDeparture === "none" ? null : guest.busDeparture,
             bus_return: guest.busReturn === "none" ? null : guest.busReturn,
             special_notes: guest.specialNotes || null
@@ -181,7 +205,8 @@ export const RSVPForm = () => {
 
       // Reset form
       setShowWizard(false);
-      setFoundGuests([]);
+      setFoundGroups({});
+      setSelectedGroup("");
       setSearchQuery("");
       setGuestData([]);
       setCurrentStep(0);
@@ -221,7 +246,7 @@ export const RSVPForm = () => {
             <CardContent className="space-y-6">
               {/* Attendance */}
               <div className="space-y-2">
-                <Label className="text-base font-medium">¿Asistirá a la boda?</Label>
+                <Label className="text-base font-medium">¿Asistirá {currentGuest.name} a la boda?</Label>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id={`attending-${currentGuest.id}`}
@@ -240,18 +265,115 @@ export const RSVPForm = () => {
                 <>
                   {/* Dietary Restrictions */}
                   <div className="space-y-2">
-                    <Label className="text-base font-medium">Restricciones alimentarias</Label>
-                    <Input
+                    <Label className="text-base font-medium">Restricciones alimentarias de {currentGuest.name}</Label>
+                    <Select 
                       value={currentGuest.dietaryRestrictions}
-                      onChange={(e) => updateGuestData(currentGuest.id, 'dietaryRestrictions', e.target.value)}
-                      placeholder="Ej: Vegetariano, sin gluten, alergias..."
-                    />
+                      onValueChange={(value) => updateGuestData(currentGuest.id, 'dietaryRestrictions', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar restricciones" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Sin restricciones</SelectItem>
+                        <SelectItem value="vegetariano">Vegetariano</SelectItem>
+                        <SelectItem value="vegano">Vegano</SelectItem>
+                        <SelectItem value="sin_gluten">Sin gluten</SelectItem>
+                        <SelectItem value="sin_lactosa">Sin lactosa</SelectItem>
+                        <SelectItem value="pescetariano">Pescetariano</SelectItem>
+                        <SelectItem value="other">Otras (especificar)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {currentGuest.dietaryRestrictions === "other" && (
+                      <Input
+                        value={currentGuest.dietaryRestrictionsOther}
+                        onChange={(e) => updateGuestData(currentGuest.id, 'dietaryRestrictionsOther', e.target.value)}
+                        placeholder="Especifica tus restricciones alimentarias..."
+                        className="mt-2"
+                      />
+                    )}
                   </div>
 
                   {/* Bus Configuration */}
-                  {currentStep === 0 && (
-                    <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/20">
-                      <div className="flex items-center space-x-2">
+                  <div className="space-y-4">
+                    <Label className="text-base font-medium">Transporte de {currentGuest.name}</Label>
+                    
+                    {!useSameBusConfig && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>¿Utilizarás el bus para la salida?</Label>
+                          <Select 
+                            value={currentGuest.busDeparture}
+                            onValueChange={(value) => updateGuestData(currentGuest.id, 'busDeparture', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar salida" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No necesito bus</SelectItem>
+                              <SelectItem value="Salida desde Móstoles">Salida desde Móstoles</SelectItem>
+                              <SelectItem value="Salida desde Madrid">Salida desde Madrid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>¿Utilizarás el bus para la vuelta?</Label>
+                          <Select 
+                            value={currentGuest.busReturn}
+                            onValueChange={(value) => updateGuestData(currentGuest.id, 'busReturn', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar vuelta" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No necesito bus</SelectItem>
+                              <SelectItem value="Vuelta a Móstoles">Vuelta a Móstoles</SelectItem>
+                              <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    {useSameBusConfig && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Bus de salida para el grupo</Label>
+                          <Select 
+                            value={groupBusConfig.departure}
+                            onValueChange={(value) => setGroupBusConfig(prev => ({...prev, departure: value}))}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar salida" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No necesito bus</SelectItem>
+                              <SelectItem value="Salida desde Móstoles">Salida desde Móstoles</SelectItem>
+                              <SelectItem value="Salida desde Madrid">Salida desde Madrid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Bus de vuelta para el grupo</Label>
+                          <Select 
+                            value={groupBusConfig.return}
+                            onValueChange={(value) => setGroupBusConfig(prev => ({...prev, return: value}))}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar vuelta" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No necesito bus</SelectItem>
+                              <SelectItem value="Vuelta a Móstoles">Vuelta a Móstoles</SelectItem>
+                              <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    {currentStep === 0 && (
+                      <div className="flex items-center space-x-2 p-4 border border-border rounded-lg bg-muted/20">
                         <Checkbox
                           id="same-bus-config"
                           checked={useSameBusConfig}
@@ -261,86 +383,12 @@ export const RSVPForm = () => {
                           Usar la misma configuración de bus para todo el grupo
                         </Label>
                       </div>
-                      
-                      {useSameBusConfig && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Bus de salida</Label>
-                            <Select 
-                              value={groupBusConfig.departure}
-                              onValueChange={(value) => setGroupBusConfig(prev => ({...prev, departure: value}))}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Seleccionar salida" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">No necesito bus</SelectItem>
-                                <SelectItem value="Salida desde Móstoles">Salida desde Móstoles</SelectItem>
-                                <SelectItem value="Salida desde Madrid">Salida desde Madrid</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Bus de vuelta</Label>
-                            <Select 
-                              value={groupBusConfig.return}
-                              onValueChange={(value) => setGroupBusConfig(prev => ({...prev, return: value}))}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Seleccionar vuelta" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">No necesito bus</SelectItem>
-                                <SelectItem value="Vuelta a Móstoles">Vuelta a Móstoles</SelectItem>
-                                <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {!useSameBusConfig && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>¿Utilizarás el bus para la salida?</Label>
-                        <Select 
-                          value={currentGuest.busDeparture}
-                          onValueChange={(value) => updateGuestData(currentGuest.id, 'busDeparture', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar salida" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">No necesito bus</SelectItem>
-                            <SelectItem value="Salida desde Móstoles">Salida desde Móstoles</SelectItem>
-                            <SelectItem value="Salida desde Madrid">Salida desde Madrid</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>¿Utilizarás el bus para la vuelta?</Label>
-                        <Select 
-                          value={currentGuest.busReturn}
-                          onValueChange={(value) => updateGuestData(currentGuest.id, 'busReturn', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar vuelta" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">No necesito bus</SelectItem>
-                            <SelectItem value="Vuelta a Móstoles">Vuelta a Móstoles</SelectItem>
-                            <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   {/* Special Notes */}
                   <div className="space-y-2">
-                    <Label className="text-base font-medium">¿Hay algo especial que quieras compartir con nosotros?</Label>
+                    <Label className="text-base font-medium">¿Hay algo especial que {currentGuest.name} quiera compartir con nosotros?</Label>
                     <Textarea
                       value={currentGuest.specialNotes}
                       onChange={(e) => updateGuestData(currentGuest.id, 'specialNotes', e.target.value)}
@@ -422,36 +470,62 @@ export const RSVPForm = () => {
                 <p className="text-sm text-muted-foreground">Buscando...</p>
               )}
               
-              {foundGuests.length > 0 && (
+              {Object.keys(foundGroups).length > 0 && (
                 <div className="space-y-4">
-                  <div className="p-4 border border-border rounded-lg bg-muted/20">
-                    <h3 className="font-medium text-lg mb-2">
-                      Grupo: {foundGuests[0].group_name}
-                    </h3>
+                  {Object.keys(foundGroups).length > 1 && (
                     <div className="space-y-2">
-                      {foundGuests.map((guest) => (
-                        <div key={guest.id} className="flex justify-between items-center">
-                          <span>{guest.name}</span>
-                          <span className="text-sm text-muted-foreground">
-                            {guest.attending === null ? 'Pendiente' : 
-                             guest.attending ? 'Confirmado' : 'No asiste'}
-                          </span>
-                        </div>
-                      ))}
+                      <Label className="text-base font-medium">Selecciona tu grupo:</Label>
+                      <Select 
+                        value={selectedGroup}
+                        onValueChange={setSelectedGroup}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar grupo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(foundGroups).map((groupName) => (
+                            <SelectItem key={groupName} value={groupName}>
+                              {groupName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </div>
+                  )}
                   
-                  <Button 
-                    onClick={startWizard}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Continuar con la confirmación
-                  </Button>
+                  {selectedGroup && foundGroups[selectedGroup] && (
+                    <div className="p-4 border border-border rounded-lg bg-muted/20">
+                      <h3 className="font-medium text-lg mb-2">
+                        Grupo: {selectedGroup}
+                      </h3>
+                      <div className="space-y-2">
+                        {foundGroups[selectedGroup].map((guest) => (
+                          <div key={guest.id} className="flex justify-between items-center">
+                            <span>{guest.name}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {guest.attending === null ? 'Pendiente' : 
+                               guest.attending ? 'Confirmado' : 'No asiste'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedGroup && (
+                    <Button 
+                      onClick={startWizard}
+                      className="w-full"
+                      size="lg"
+                      disabled={!selectedGroup}
+                    >
+                      Continuar con la confirmación
+                    </Button>
+                  )}
                 </div>
               )}
               
-              {searchQuery.length >= 3 && !isSearching && foundGuests.length === 0 && (
+              {searchQuery.length >= 3 && !isSearching && Object.keys(foundGroups).length === 0 && (
                 <p className="text-sm text-muted-foreground">
                   No se encontraron invitados con ese nombre. Verifica que esté escrito correctamente.
                 </p>
