@@ -41,8 +41,8 @@ export const RSVPForm = () => {
   const [guestData, setGuestData] = useState<GuestData[]>([]);
   const [useSameBusConfig, setUseSameBusConfig] = useState(false);
   const [groupBusConfig, setGroupBusConfig] = useState({
-    departure: "",
-    return: ""
+    departure: "none",
+    return: "none"
   });
 
   const searchGuests = async (query: string) => {
@@ -102,8 +102,8 @@ export const RSVPForm = () => {
       name: guest.name,
       attending: guest.attending !== null ? guest.attending : true,
       dietaryRestrictions: guest.dietary_restrictions || "",
-      busDeparture: guest.bus_departure || "",
-      busReturn: guest.bus_return || "",
+      busDeparture: guest.bus_departure || "none",
+      busReturn: guest.bus_return || "none",
       specialNotes: guest.special_notes || ""
     }));
     setGuestData(initialData);
@@ -155,10 +155,10 @@ export const RSVPForm = () => {
           .from('guests')
           .update({
             attending: guest.attending,
-            dietary_restrictions: guest.dietaryRestrictions,
-            bus_departure: guest.busDeparture,
-            bus_return: guest.busReturn,
-            special_notes: guest.specialNotes
+            dietary_restrictions: guest.dietaryRestrictions || null,
+            bus_departure: guest.busDeparture === "none" ? null : guest.busDeparture,
+            bus_return: guest.busReturn === "none" ? null : guest.busReturn,
+            special_notes: guest.specialNotes || null
           })
           .eq('id', guest.id);
 
@@ -274,7 +274,7 @@ export const RSVPForm = () => {
                                 <SelectValue placeholder="Seleccionar salida" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="">No necesito bus</SelectItem>
+                                <SelectItem value="none">No necesito bus</SelectItem>
                                 <SelectItem value="Salida desde Móstoles">Salida desde Móstoles</SelectItem>
                                 <SelectItem value="Salida desde Madrid">Salida desde Madrid</SelectItem>
                               </SelectContent>
@@ -290,7 +290,7 @@ export const RSVPForm = () => {
                                 <SelectValue placeholder="Seleccionar vuelta" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="">No necesito bus</SelectItem>
+                                <SelectItem value="none">No necesito bus</SelectItem>
                                 <SelectItem value="Vuelta a Móstoles">Vuelta a Móstoles</SelectItem>
                                 <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
                               </SelectContent>
@@ -313,7 +313,7 @@ export const RSVPForm = () => {
                             <SelectValue placeholder="Seleccionar salida" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">No necesito bus</SelectItem>
+                            <SelectItem value="none">No necesito bus</SelectItem>
                             <SelectItem value="Salida desde Móstoles">Salida desde Móstoles</SelectItem>
                             <SelectItem value="Salida desde Madrid">Salida desde Madrid</SelectItem>
                           </SelectContent>
@@ -329,7 +329,7 @@ export const RSVPForm = () => {
                             <SelectValue placeholder="Seleccionar vuelta" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">No necesito bus</SelectItem>
+                            <SelectItem value="none">No necesito bus</SelectItem>
                             <SelectItem value="Vuelta a Móstoles">Vuelta a Móstoles</SelectItem>
                             <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
                           </SelectContent>
