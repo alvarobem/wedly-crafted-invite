@@ -10,7 +10,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trash2, Plus, LogOut } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Trash2, Plus, LogOut, PieChart } from 'lucide-react';
+import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface Guest {
   id: string;
@@ -150,6 +152,67 @@ const Dashboard = () => {
   const confirmedNotAttending = guests.filter(g => g.attending === false).length;
   const pending = guests.filter(g => g.attending === null).length;
 
+  // Chart data
+  const chartData = [
+    { name: 'Confirmados', value: confirmedAttending, color: '#22c55e' },
+    { name: 'No Asisten', value: confirmedNotAttending, color: '#ef4444' },
+    { name: 'Pendientes', value: pending, color: '#eab308' },
+  ].filter(item => item.value > 0);
+
+  // Functions to get guests by status
+  const getGuestsByStatus = (status: 'total' | 'confirmed' | 'not_attending' | 'pending') => {
+    switch (status) {
+      case 'total':
+        return guests;
+      case 'confirmed':
+        return guests.filter(g => g.attending === true);
+      case 'not_attending':
+        return guests.filter(g => g.attending === false);
+      case 'pending':
+        return guests.filter(g => g.attending === null);
+      default:
+        return [];
+    }
+  };
+
+  const GuestListDialog = ({ title, guests: dialogGuests }: { title: string; guests: Guest[] }) => (
+    <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>
+          {dialogGuests.length} invitados en esta categoría
+        </DialogDescription>
+      </DialogHeader>
+      <div className="space-y-3">
+        {dialogGuests.map((guest) => (
+          <div key={guest.id} className="flex items-center justify-between p-3 border rounded">
+            <div className="flex-1">
+              <div className="font-medium">{guest.name}</div>
+              <div className="text-sm text-muted-foreground">
+                Grupo: {guest.group_name}
+                {guest.bus_departure && (
+                  <span className="ml-2">• Bus salida: {guest.bus_departure}</span>
+                )}
+                {guest.bus_return && (
+                  <span className="ml-2">• Bus vuelta: {guest.bus_return}</span>
+                )}
+              </div>
+            </div>
+            <Badge variant={
+              guest.attending === null ? "outline" : 
+              guest.attending ? "default" : 
+              "destructive"
+            }>
+              {guest.attending === null ? 'Pendiente' : 
+               guest.attending ? 'Confirmado' : 
+               'No asiste'}
+            </Badge>
+          </div>
+        ))}
+      </div>
+    </DialogContent>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -167,31 +230,92 @@ const Dashboard = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold">{totalGuests}</div>
-              <p className="text-xs text-muted-foreground">Total Invitados</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-green-600">{confirmedAttending}</div>
-              <p className="text-xs text-muted-foreground">Confirmados</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-red-600">{confirmedNotAttending}</div>
-              <p className="text-xs text-muted-foreground">No Asisten</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-yellow-600">{pending}</div>
-              <p className="text-xs text-muted-foreground">Pendientes</p>
-            </CardContent>
-          </Card>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="text-2xl font-bold">{totalGuests}</div>
+                  <p className="text-xs text-muted-foreground">Total Invitados</p>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <GuestListDialog title="Todos los Invitados" guests={getGuestsByStatus('total')} />
+          </Dialog>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="text-2xl font-bold text-green-600">{confirmedAttending}</div>
+                  <p className="text-xs text-muted-foreground">Confirmados</p>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <GuestListDialog title="Invitados Confirmados" guests={getGuestsByStatus('confirmed')} />
+          </Dialog>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="text-2xl font-bold text-red-600">{confirmedNotAttending}</div>
+                  <p className="text-xs text-muted-foreground">No Asisten</p>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <GuestListDialog title="Invitados que No Asisten" guests={getGuestsByStatus('not_attending')} />
+          </Dialog>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="text-2xl font-bold text-yellow-600">{pending}</div>
+                  <p className="text-xs text-muted-foreground">Pendientes</p>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <GuestListDialog title="Invitados Pendientes" guests={getGuestsByStatus('pending')} />
+          </Dialog>
         </div>
+
+        {/* Chart */}
+        {totalGuests > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PieChart className="h-5 w-5 text-primary" />
+                Estado de los Invitados
+              </CardTitle>
+              <CardDescription>
+                Distribución visual del estado de confirmación
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [`${value} invitados`, 'Cantidad']} />
+                    <Legend />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Add Guest Form */}
         <Card>
