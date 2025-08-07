@@ -301,7 +301,7 @@ export const RSVPForm = () => {
                     {!useSameBusConfig && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>¿Utilizarás el bus para la salida?</Label>
+                          <Label>¿Utilizará {currentGuest.name} el bus para la salida?</Label>
                           <Select 
                             value={currentGuest.busDeparture}
                             onValueChange={(value) => updateGuestData(currentGuest.id, 'busDeparture', value)}
@@ -317,7 +317,7 @@ export const RSVPForm = () => {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label>¿Utilizarás el bus para la vuelta?</Label>
+                          <Label>¿Utilizará {currentGuest.name} el bus para la vuelta?</Label>
                           <Select 
                             value={currentGuest.busReturn}
                             onValueChange={(value) => updateGuestData(currentGuest.id, 'busReturn', value)}
@@ -335,7 +335,7 @@ export const RSVPForm = () => {
                       </div>
                     )}
 
-                    {useSameBusConfig && (
+                    {useSameBusConfig && currentStep === 0 && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Bus de salida para el grupo</Label>
@@ -368,6 +368,22 @@ export const RSVPForm = () => {
                               <SelectItem value="Vuelta a Madrid">Vuelta a Madrid</SelectItem>
                             </SelectContent>
                           </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    {useSameBusConfig && currentStep > 0 && (
+                      <div className="p-4 border border-border rounded-lg bg-muted/20">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Configuración de bus aplicada para todo el grupo:
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium">Salida:</span> {groupBusConfig.departure === "none" ? "No necesita bus" : groupBusConfig.departure}
+                          </div>
+                          <div>
+                            <span className="font-medium">Vuelta:</span> {groupBusConfig.return === "none" ? "No necesita bus" : groupBusConfig.return}
+                          </div>
                         </div>
                       </div>
                     )}
