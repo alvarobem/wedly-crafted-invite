@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2, Plus, LogOut, PieChart } from 'lucide-react';
+import { Trash2, Plus, LogOut, PieChart, Bus } from 'lucide-react';
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface Guest {
@@ -158,6 +158,20 @@ const Dashboard = () => {
     { name: 'No Asisten', value: confirmedNotAttending, color: '#ef4444' },
     { name: 'Pendientes', value: pending, color: '#eab308' },
   ].filter(item => item.value > 0);
+
+  // Calculate bus statistics
+  const busStatistics = {
+    departure: {
+      total: guests.filter(g => g.bus_departure && g.bus_departure !== "none").length,
+      madrid: guests.filter(g => g.bus_departure === "Salida desde Madrid").length,
+      mostoles: guests.filter(g => g.bus_departure === "Salida desde Móstoles").length,
+    },
+    return: {
+      total: guests.filter(g => g.bus_return && g.bus_return !== "none").length,
+      madrid: guests.filter(g => g.bus_return === "Vuelta a Madrid").length,
+      mostoles: guests.filter(g => g.bus_return === "Vuelta a Móstoles").length,
+    }
+  };
 
   // Functions to get guests by status
   const getGuestsByStatus = (status: 'total' | 'confirmed' | 'not_attending' | 'pending') => {
@@ -312,6 +326,92 @@ const Dashboard = () => {
                     <Legend />
                   </RechartsPieChart>
                 </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Bus Statistics */}
+        {totalGuests > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Bus className="h-5 w-5 text-primary" />
+                Estadísticas de Transporte
+              </CardTitle>
+              <CardDescription>
+                Uso del servicio de autobús por los invitados
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Departure Statistics */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg">Autobús de Ida</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <span className="font-medium">Total usando autobús</span>
+                      <Badge variant="secondary" className="text-lg font-bold">
+                        {busStatistics.departure.total}
+                      </Badge>
+                    </div>
+                    {busStatistics.departure.madrid > 0 && (
+                      <div className="flex justify-between items-center p-2 border rounded-lg bg-muted/20">
+                        <span className="text-sm">Desde Madrid</span>
+                        <Badge variant="outline">
+                          {busStatistics.departure.madrid} personas
+                        </Badge>
+                      </div>
+                    )}
+                    {busStatistics.departure.mostoles > 0 && (
+                      <div className="flex justify-between items-center p-2 border rounded-lg bg-muted/20">
+                        <span className="text-sm">Desde Móstoles</span>
+                        <Badge variant="outline">
+                          {busStatistics.departure.mostoles} personas
+                        </Badge>
+                      </div>
+                    )}
+                    {busStatistics.departure.total === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        Ningún invitado ha solicitado autobús para la ida
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Return Statistics */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg">Autobús de Vuelta</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 border rounded-lg">
+                      <span className="font-medium">Total usando autobús</span>
+                      <Badge variant="secondary" className="text-lg font-bold">
+                        {busStatistics.return.total}
+                      </Badge>
+                    </div>
+                    {busStatistics.return.madrid > 0 && (
+                      <div className="flex justify-between items-center p-2 border rounded-lg bg-muted/20">
+                        <span className="text-sm">A Madrid</span>
+                        <Badge variant="outline">
+                          {busStatistics.return.madrid} personas
+                        </Badge>
+                      </div>
+                    )}
+                    {busStatistics.return.mostoles > 0 && (
+                      <div className="flex justify-between items-center p-2 border rounded-lg bg-muted/20">
+                        <span className="text-sm">A Móstoles</span>
+                        <Badge variant="outline">
+                          {busStatistics.return.mostoles} personas
+                        </Badge>
+                      </div>
+                    )}
+                    {busStatistics.return.total === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-4">
+                        Ningún invitado ha solicitado autobús para la vuelta
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
