@@ -393,7 +393,16 @@ export const RSVPForm = () => {
                         <Checkbox
                           id="same-bus-config"
                           checked={useSameBusConfig}
-                          onCheckedChange={(checked) => setUseSameBusConfig(checked === true)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              // When enabling, copy current guest's values to group config
+                              setGroupBusConfig({
+                                departure: currentGuest.busDeparture,
+                                return: currentGuest.busReturn
+                              });
+                            }
+                            setUseSameBusConfig(checked === true);
+                          }}
                         />
                         <Label htmlFor="same-bus-config" className="font-medium">
                           Usar la misma configuración de bus para todo el grupo
