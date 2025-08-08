@@ -102,7 +102,7 @@ const Dashboard = () => {
 
         const guestsToInsert = names.map(name => ({
           name: name,
-          group_name: newGuestGroup.trim(),
+          group_name: newGuestGroup.trim() || null,
           attending: null,
           bus_departure: null,
           bus_return: null,
@@ -119,9 +119,12 @@ const Dashboard = () => {
             variant: "destructive",
           });
         } else {
+          const groupMessage = newGuestGroup.trim() 
+            ? `Grupo "${newGuestGroup}" creado con ${names.length} invitado(s)`
+            : `${names.length} invitado(s) creado(s) sin grupo`;
           toast({
             title: "¡Éxito!",
-            description: `Grupo "${newGuestGroup}" creado con ${names.length} invitado(s)`,
+            description: groupMessage,
           });
           setNewGuestGroup('');
           setMultipleNames('');
