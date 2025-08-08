@@ -39,6 +39,9 @@ const Dashboard = () => {
   const [selectedExistingGroup, setSelectedExistingGroup] = useState('');
   const [isCreatingGroup, setIsCreatingGroup] = useState(true);
   const [multipleNames, setMultipleNames] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -197,7 +200,27 @@ const Dashboard = () => {
     navigate('/');
   };
 
-  // Group guests by group_name
+  // Group guests by group_name and apply filtering
+  const filteredGuestGroups: GuestGroup[] = guests.reduce((acc, guest) => {
+    // Apply name filter
+    const matchesFilter = searchFilter === '' || 
+      guest.name.toLowerCase().includes(searchFilter.toLowerCase());
+    
+    if (!matchesFilter) return acc;
+
+    const existingGroup = acc.find(group => group.groupName === guest.group_name);
+    if (existingGroup) {
+      existingGroup.guests.push(guest);
+    } else {
+      acc.push({
+        groupName: guest.group_name,
+        guests: [guest]
+      });
+    }
+    return acc;
+  }, [] as GuestGroup[]);
+
+  // All groups for the select dropdown (unfiltered)
   const guestGroups: GuestGroup[] = guests.reduce((acc, guest) => {
     const existingGroup = acc.find(group => group.groupName === guest.group_name);
     if (existingGroup) {
@@ -210,6 +233,17 @@ const Dashboard = () => {
     }
     return acc;
   }, [] as GuestGroup[]);
+
+  // Pagination for filtered groups
+  const totalPages = Math.ceil(filteredGuestGroups.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGroups = filteredGuestGroups.slice(startIndex, endIndex);
+
+  // Reset to first page when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchFilter]);
 
   // Calculate statistics
   const totalGuests = guests.length;
@@ -582,9 +616,39 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
+        {/* Filter and Search */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Lista de Invitados</CardTitle>
+            <CardDescription>
+              Filtra por nombre y navega entre los grupos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 mb-4">
+              <div className="flex-1">
+                <Label htmlFor="search-filter">Buscar por nombre</Label>
+                <Input
+                  id="search-filter"
+                  placeholder="Escribe un nombre para filtrar..."
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            {searchFilter && (
+              <div className="text-sm text-muted-foreground mb-4">
+                Mostrando {filteredGuestGroups.reduce((acc, group) => acc + group.guests.length, 0)} invitado(s) 
+                en {filteredGuestGroups.length} grupo(s) que coinciden con "{searchFilter}"
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Guest Groups */}
         <div className="space-y-6">
-          {guestGroups.map((group) => (
+          {paginatedGroups.map((group) => (
             <Card key={group.groupName}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -635,13 +699,73 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {guestGroups.length === 0 && (
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  Página {currentPage} de {totalPages}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    Anterior
+                  </Button>
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className="w-10"
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Siguiente
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {filteredGuestGroups.length === 0 && (
           <Card>
             <CardContent className="pt-6 text-center">
-              <p className="text-muted-foreground">No hay invitados registrados aún.</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Usa el formulario de arriba para añadir el primer invitado.
-              </p>
+              {searchFilter ? (
+                <>
+                  <p className="text-muted-foreground">No se encontraron invitados que coincidan con "{searchFilter}".</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2"
+                    onClick={() => setSearchFilter('')}
+                  >
+                    Limpiar filtro
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-muted-foreground">No hay invitados registrados aún.</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Usa el formulario de arriba para añadir el primer invitado.
+                  </p>
+                </>
+              )}
             </CardContent>
           </Card>
         )}
