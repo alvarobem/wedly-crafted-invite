@@ -36,6 +36,9 @@ const Dashboard = () => {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [newGuestName, setNewGuestName] = useState('');
   const [newGuestGroup, setNewGuestGroup] = useState('');
+  const [selectedExistingGroup, setSelectedExistingGroup] = useState('');
+  const [isCreatingGroup, setIsCreatingGroup] = useState(true);
+  const [multipleNames, setMultipleNames] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -66,41 +69,103 @@ const Dashboard = () => {
   };
 
   const addGuest = async () => {
-    if (!newGuestName.trim() || !newGuestGroup.trim()) {
-      toast({
-        title: "Error",
-        description: "Por favor completa todos los campos",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
 
-    const { error } = await supabase
-      .from('guests')
-      .insert([{
-        name: newGuestName.trim(),
-        group_name: newGuestGroup.trim(),
-        attending: null,
-        bus_departure: null,
-        bus_return: null,
-      }]);
+    try {
+      if (isCreatingGroup) {
+        // Creating a new group with multiple members
+        if (!newGuestGroup.trim() || !multipleNames.trim()) {
+          toast({
+            title: "Error",
+            description: "Por favor completa el nombre del grupo y al menos un invitado",
+            variant: "destructive",
+          });
+          return;
+        }
 
-    if (error) {
+        const names = multipleNames
+          .split('\n')
+          .map(name => name.trim())
+          .filter(name => name.length > 0);
+
+        if (names.length === 0) {
+          toast({
+            title: "Error",
+            description: "Por favor añade al menos un nombre de invitado",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const guestsToInsert = names.map(name => ({
+          name: name,
+          group_name: newGuestGroup.trim(),
+          attending: null,
+          bus_departure: null,
+          bus_return: null,
+        }));
+
+        const { error } = await supabase
+          .from('guests')
+          .insert(guestsToInsert);
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: "No se pudo crear el grupo",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "¡Éxito!",
+            description: `Grupo "${newGuestGroup}" creado con ${names.length} invitado(s)`,
+          });
+          setNewGuestGroup('');
+          setMultipleNames('');
+          fetchGuests();
+        }
+      } else {
+        // Adding to existing group
+        if (!newGuestName.trim() || !selectedExistingGroup) {
+          toast({
+            title: "Error",
+            description: "Por favor completa el nombre del invitado y selecciona un grupo",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const { error } = await supabase
+          .from('guests')
+          .insert([{
+            name: newGuestName.trim(),
+            group_name: selectedExistingGroup,
+            attending: null,
+            bus_departure: null,
+            bus_return: null,
+          }]);
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: "No se pudo añadir el invitado",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "¡Éxito!",
+            description: `Invitado añadido al grupo "${selectedExistingGroup}"`,
+          });
+          setNewGuestName('');
+          fetchGuests();
+        }
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: "No se pudo añadir el invitado",
+        description: "Ocurrió un error inesperado",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "¡Éxito!",
-        description: "Invitado añadido correctamente",
-      });
-      setNewGuestName('');
-      setNewGuestGroup('');
-      fetchGuests();
     }
 
     setIsLoading(false);
@@ -417,41 +482,103 @@ const Dashboard = () => {
           </Card>
         )}
 
-        {/* Add Guest Form */}
+        {/* Guest Management Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Añadir Nuevo Invitado</CardTitle>
+            <CardTitle>Gestión de Invitados</CardTitle>
             <CardDescription>
-              Agrega invitados organizados por grupos
+              Crea grupos nuevos o añade invitados a grupos existentes
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <Label htmlFor="guest-name">Nombre del Invitado</Label>
-                <Input
-                  id="guest-name"
-                  placeholder="Nombre completo"
-                  value={newGuestName}
-                  onChange={(e) => setNewGuestName(e.target.value)}
-                />
-              </div>
-              <div className="flex-1">
-                <Label htmlFor="guest-group">Nombre del Grupo</Label>
-                <Input
-                  id="guest-group"
-                  placeholder="Ej: Familia García"
-                  value={newGuestGroup}
-                  onChange={(e) => setNewGuestGroup(e.target.value)}
-                />
-              </div>
-              <div className="flex items-end">
-                <Button onClick={addGuest} disabled={isLoading}>
+          <CardContent className="space-y-6">
+            {/* Mode Selector */}
+            <div className="flex gap-2 p-1 bg-muted rounded-lg">
+              <Button
+                variant={isCreatingGroup ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setIsCreatingGroup(true)}
+                className="flex-1"
+              >
+                Crear Grupo Nuevo
+              </Button>
+              <Button
+                variant={!isCreatingGroup ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setIsCreatingGroup(false)}
+                className="flex-1"
+              >
+                Añadir a Grupo Existente
+              </Button>
+            </div>
+
+            {isCreatingGroup ? (
+              /* Create New Group */
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="new-group-name">Nombre del Grupo</Label>
+                  <Input
+                    id="new-group-name"
+                    placeholder="Ej: Familia García"
+                    value={newGuestGroup}
+                    onChange={(e) => setNewGuestGroup(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="multiple-names">Nombres de los Invitados</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Escribe un nombre por línea
+                  </p>
+                  <textarea
+                    id="multiple-names"
+                    className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Juan García&#10;María García&#10;Pedro García"
+                    value={multipleNames}
+                    onChange={(e) => setMultipleNames(e.target.value)}
+                  />
+                </div>
+                <Button onClick={addGuest} disabled={isLoading} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Añadir
+                  Crear Grupo
                 </Button>
               </div>
-            </div>
+            ) : (
+              /* Add to Existing Group */
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="guest-name">Nombre del Invitado</Label>
+                    <Input
+                      id="guest-name"
+                      placeholder="Nombre completo"
+                      value={newGuestName}
+                      onChange={(e) => setNewGuestName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="existing-group">Seleccionar Grupo</Label>
+                    <Select
+                      value={selectedExistingGroup}
+                      onValueChange={setSelectedExistingGroup}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un grupo existente" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border shadow-md z-50">
+                        {guestGroups.map((group) => (
+                          <SelectItem key={group.groupName} value={group.groupName}>
+                            {group.groupName} ({group.guests.length} invitado{group.guests.length !== 1 ? 's' : ''})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button onClick={addGuest} disabled={isLoading} className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Añadir Invitado
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
