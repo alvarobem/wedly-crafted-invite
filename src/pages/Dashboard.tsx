@@ -291,43 +291,120 @@ const Dashboard = () => {
     }
   };
 
-  const GuestListDialog = ({ title, guests: dialogGuests }: { title: string; guests: Guest[] }) => (
-    <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-      <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>
-          {dialogGuests.length} invitados en esta categoría
-        </DialogDescription>
-      </DialogHeader>
-      <div className="space-y-3">
-        {dialogGuests.map((guest) => (
-          <div key={guest.id} className="flex items-center justify-between p-3 border rounded">
-            <div className="flex-1">
-              <div className="font-medium">{guest.name}</div>
-              <div className="text-sm text-muted-foreground">
-                Grupo: {guest.group_name}
-                {guest.bus_departure && (
-                  <span className="ml-2">• Bus salida: {guest.bus_departure}</span>
-                )}
-                {guest.bus_return && (
-                  <span className="ml-2">• Bus vuelta: {guest.bus_return}</span>
-                )}
-              </div>
-            </div>
-            <Badge variant={
-              guest.attending === null ? "outline" : 
-              guest.attending ? "default" : 
-              "destructive"
-            }>
-              {guest.attending === null ? 'Pendiente' : 
-               guest.attending ? 'Confirmado' : 
-               'No asiste'}
-            </Badge>
+  const GuestListDialog = ({ title, guests: dialogGuests }: { title: string; guests: Guest[] }) => {
+    const [modalSearchFilter, setModalSearchFilter] = useState('');
+    const [modalCurrentPage, setModalCurrentPage] = useState(1);
+    const modalItemsPerPage = 8;
+
+    // Filter guests by name
+    const filteredDialogGuests = dialogGuests.filter(guest =>
+      modalSearchFilter === '' || 
+      guest.name.toLowerCase().includes(modalSearchFilter.toLowerCase())
+    );
+
+    // Pagination for modal
+    const modalTotalPages = Math.ceil(filteredDialogGuests.length / modalItemsPerPage);
+    const modalStartIndex = (modalCurrentPage - 1) * modalItemsPerPage;
+    const modalEndIndex = modalStartIndex + modalItemsPerPage;
+    const paginatedDialogGuests = filteredDialogGuests.slice(modalStartIndex, modalEndIndex);
+
+    // Reset to first page when filter changes
+    useEffect(() => {
+      setModalCurrentPage(1);
+    }, [modalSearchFilter]);
+
+    return (
+      <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>
+            {dialogGuests.length} invitados en esta categoría
+          </DialogDescription>
+        </DialogHeader>
+        
+        {/* Search Filter */}
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="modal-search-filter">Buscar por nombre</Label>
+            <Input
+              id="modal-search-filter"
+              placeholder="Escribe un nombre para filtrar..."
+              value={modalSearchFilter}
+              onChange={(e) => setModalSearchFilter(e.target.value)}
+            />
           </div>
-        ))}
-      </div>
-    </DialogContent>
-  );
+          
+          {modalSearchFilter && (
+            <div className="text-sm text-muted-foreground">
+              Mostrando {filteredDialogGuests.length} invitado(s) que coinciden con "{modalSearchFilter}"
+            </div>
+          )}
+        </div>
+
+        {/* Guest List with Scroll */}
+        <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+          {paginatedDialogGuests.map((guest) => (
+            <div key={guest.id} className="flex items-center justify-between p-3 border rounded">
+              <div className="flex-1">
+                <div className="font-medium">{guest.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  Grupo: {guest.group_name || 'Sin grupo'}
+                  {guest.bus_departure && (
+                    <span className="ml-2">• Bus salida: {guest.bus_departure}</span>
+                  )}
+                  {guest.bus_return && (
+                    <span className="ml-2">• Bus vuelta: {guest.bus_return}</span>
+                  )}
+                </div>
+              </div>
+              <Badge variant={
+                guest.attending === null ? "outline" : 
+                guest.attending ? "default" : 
+                "destructive"
+              }>
+                {guest.attending === null ? 'Pendiente' : 
+                 guest.attending ? 'Confirmado' : 
+                 'No asiste'}
+              </Badge>
+            </div>
+          ))}
+          
+          {filteredDialogGuests.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              No se encontraron invitados que coincidan con la búsqueda
+            </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {modalTotalPages > 1 && (
+          <div className="flex items-center justify-between pt-4 border-t">
+            <div className="text-sm text-muted-foreground">
+              Página {modalCurrentPage} de {modalTotalPages}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setModalCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={modalCurrentPage === 1}
+              >
+                Anterior
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setModalCurrentPage(prev => Math.min(prev + 1, modalTotalPages))}
+                disabled={modalCurrentPage === modalTotalPages}
+              >
+                Siguiente
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
