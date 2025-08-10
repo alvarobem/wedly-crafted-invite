@@ -77,10 +77,10 @@ const Dashboard = () => {
     try {
       if (isCreatingGroup) {
         // Creating a new group with multiple members
-        if (!newGuestGroup.trim() || !multipleNames.trim()) {
+        if (!multipleNames.trim()) {
           toast({
             title: "Error",
-            description: "Por favor completa el nombre del grupo y al menos un invitado",
+            description: "Por favor añade al menos un invitado",
             variant: "destructive",
           });
           return;
