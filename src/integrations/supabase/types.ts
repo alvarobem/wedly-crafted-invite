@@ -21,7 +21,7 @@ export type Database = {
           bus_return: string | null
           created_at: string
           dietary_restrictions: string | null
-          group_name: string
+          group_name: string | null
           id: string
           name: string
           special_notes: string | null
@@ -33,7 +33,7 @@ export type Database = {
           bus_return?: string | null
           created_at?: string
           dietary_restrictions?: string | null
-          group_name: string
+          group_name?: string | null
           id?: string
           name: string
           special_notes?: string | null
@@ -45,11 +45,32 @@ export type Database = {
           bus_return?: string | null
           created_at?: string
           dietary_restrictions?: string | null
-          group_name?: string
+          group_name?: string | null
           id?: string
           name?: string
           special_notes?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      playlist_songs: {
+        Row: {
+          artist: string
+          created_at: string
+          id: string
+          song_name: string
+        }
+        Insert: {
+          artist: string
+          created_at?: string
+          id?: string
+          song_name: string
+        }
+        Update: {
+          artist?: string
+          created_at?: string
+          id?: string
+          song_name?: string
         }
         Relationships: []
       }
