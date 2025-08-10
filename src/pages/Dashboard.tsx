@@ -552,10 +552,10 @@ const Dashboard = () => {
               /* Create New Group */
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="new-group-name">Nombre del Grupo</Label>
+                  <Label htmlFor="new-group-name">Nombre del Grupo (Opcional)</Label>
                   <Input
                     id="new-group-name"
-                    placeholder="Ej: Familia García"
+                    placeholder="Ej: Familia García (déjalo vacío para crear sin grupo)"
                     value={newGuestGroup}
                     onChange={(e) => setNewGuestGroup(e.target.value)}
                   />
@@ -575,7 +575,7 @@ const Dashboard = () => {
                 </div>
                 <Button onClick={addGuest} disabled={isLoading} className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Crear Grupo
+                  Añadir Invitado(s)
                 </Button>
               </div>
             ) : (
