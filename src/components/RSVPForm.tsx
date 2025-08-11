@@ -395,7 +395,7 @@ export const RSVPForm = () => {
                       </div>
                     )}
 
-                    {currentStep === 0 && (
+                    {currentStep === 0 && guestData.length > 1 && !selectedGroup.startsWith('Individual:') && (
                       <div className="flex items-center space-x-2 p-4 border border-border rounded-lg bg-muted/20">
                         <Checkbox
                           id="same-bus-config"
@@ -528,7 +528,7 @@ export const RSVPForm = () => {
                   {selectedGroup && foundGroups[selectedGroup] && (
                     <div className="p-4 border border-border rounded-lg bg-muted/20">
                       <h3 className="font-medium text-lg mb-2">
-                        Grupo: {selectedGroup}
+                        {selectedGroup.startsWith('Individual:') ? 'Individual' : `Grupo: ${selectedGroup}`}
                       </h3>
                       <div className="space-y-2">
                         {foundGroups[selectedGroup].map((guest) => (
