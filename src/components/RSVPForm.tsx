@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Heart, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -254,18 +255,26 @@ export const RSVPForm = () => {
               {/* Attendance */}
               <div className="space-y-2">
                 <Label className="text-base font-medium">¿Asistirá {currentGuest.name} a la boda?</Label>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`attending-${currentGuest.id}`}
-                    checked={currentGuest.attending}
-                    onCheckedChange={(checked) => 
-                      updateGuestData(currentGuest.id, 'attending', checked)
-                    }
-                  />
-                  <Label htmlFor={`attending-${currentGuest.id}`}>
-                    Sí, asistiré
-                  </Label>
-                </div>
+                <RadioGroup
+                  value={currentGuest.attending ? "yes" : "no"}
+                  onValueChange={(value) => 
+                    updateGuestData(currentGuest.id, 'attending', value === "yes")
+                  }
+                  className="flex flex-col space-y-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id={`attending-yes-${currentGuest.id}`} />
+                    <Label htmlFor={`attending-yes-${currentGuest.id}`}>
+                      Sí, asistiré
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id={`attending-no-${currentGuest.id}`} />
+                    <Label htmlFor={`attending-no-${currentGuest.id}`}>
+                      No asistiré
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
 
               {currentGuest.attending && (
