@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +10,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    --primary-color: 150 10.3% 73.3%;
     --background: 355 25% 97%;
     --foreground: 345 15% 15%;
 
@@ -17,7 +20,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 345 15% 15%;
 
-    --primary: 340 55% 50%;
+    --primary: var(--primary-color);
     --primary-foreground: 0 0% 100%;
 
     --secondary: 350 30% 92%;
@@ -34,9 +37,9 @@ All colors MUST be HSL.
 
     --border: 350 25% 88%;
     --input: 350 25% 88%;
-    --ring: 340 55% 50%;
+    --ring: var(--primary-color);
 
-    --romantic: 340 55% 50%;
+    --romantic: var(--primary-color);
     --romantic-light: 345 45% 85%;
     --romantic-dark: 335 65% 35%;
     --gold: 40 85% 75%;
@@ -117,5 +120,15 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: noto;
   }
+}
+
+
+.color-gray {
+  background-color: #c1b9ab;
+}
+
+.index-box {
+  width: 100%;
 }
