@@ -67,20 +67,27 @@ export const RSVPForm = () => {
       }
 
       if (data && data.length > 0) {
-        // Group guests by group_name
+        // Group guests by group_name (handle null groups)
         const groupedGuests: {[groupName: string]: DBGuest[]} = {};
         
         for (const guest of data) {
-          if (!groupedGuests[guest.group_name]) {
-            // Get all guests from this group
-            const { data: groupGuests, error: groupError } = await supabase
-              .from('guests')
-              .select('*')
-              .eq('group_name', guest.group_name)
-              .order('name');
+          const groupKey = guest.group_name || `Individual: ${guest.name}`;
+          
+          if (!groupedGuests[groupKey]) {
+            if (guest.group_name) {
+              // Get all guests from this group
+              const { data: groupGuests, error: groupError } = await supabase
+                .from('guests')
+                .select('*')
+                .eq('group_name', guest.group_name)
+                .order('name');
 
-            if (!groupError && groupGuests) {
-              groupedGuests[guest.group_name] = groupGuests;
+              if (!groupError && groupGuests) {
+                groupedGuests[groupKey] = groupGuests;
+              }
+            } else {
+              // Individual guest without group
+              groupedGuests[groupKey] = [guest];
             }
           }
         }
