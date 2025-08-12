@@ -1,28 +1,23 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Clock, Camera, Music, Gift } from "lucide-react";
+import tailandia from "@/assets/Tailandia.png";
+import { Button } from "@/components/ui/button";
 
 export const WeddingDetails = () => {
   const events = [
     {
       title: "Ceremonia",
-      time: "16:00",
-      location: "Iglesia de San Francisco",
-      address: "Calle Principal 123, Centro Histórico",
+      time: "12:30",
+      location: "Parroquia del Inmaculado Corazón de María",
+      address: "Calle Ferraz 74",
       description: "La ceremonia religiosa donde uniremos nuestras vidas"
     },
     {
-      title: "Cóctel",
-      time: "17:30",
-      location: "Jardines del Hotel Boutique",
+      title: "Celebración",
+      time: "15:00",
+      location: "La Cañada de Mónico",
       address: "Avenida de los Rosales 456",
       description: "Brindis y aperitivos en un ambiente íntimo"
-    },
-    {
-      title: "Cena y Fiesta",
-      time: "20:00",
-      location: "Salón de Eventos Villa Romántica",
-      address: "Carretera a las Flores Km 5",
-      description: "Cena de gala seguida de música y baile hasta el amanecer"
     }
   ];
 
@@ -45,28 +40,58 @@ export const WeddingDetails = () => {
   ];
 
   return (
-    <section className="py-20 px-4 bg-background">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-light text-foreground mb-4">
-            Detalles del Evento
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Toda la información que necesitas para acompañarnos en este día tan especial
-          </p>
-        </div>
+    <section className="py-20 px-4 bg-background" id="wedding-details">
 
-        {/* Timeline */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-light text-center mb-8 text-foreground">
-            Cronograma del Día
-          </h3>
-          <div className="grid gap-6 md:grid-cols-3">
+      <div className="text-center mb-16 relative">
+        
+        <div >
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+            Como ya sabéis, este 2025 empezó de la manera más especial que podíamos imaginar y es que empezamos nuevo viaje..
+          </p>
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+            ¡Nos casamos!
+          </p>
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+            Y nada nos puede hacer más ilusión que compartirlo con vosotros.
+          </p>
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+            Mientras llega el gran día, os dejamos por aquí toda la información para que no os perdáis nada
+          </p>
+    
+        </div>
+        
+        <img
+          src= {tailandia}
+          alt="Decoración"
+          className="absolute right-0 bottom-0 sm:w-1/8 md:w-1/3 h-auto pointer-events-none select-none"
+          style={{ zIndex: 0, 
+            marginBottom: '-7rem',
+          }}
+        />
+      </div>
+      {/* Timeline */}
+        <div className="mb-16 color-gray w-screen -mx-4 pb-8" 
+          style={{zIndex:1}}>
+
+            <div className="bg-white -mt-5 px-5 py-3 inline-block relative z-10 mx-auto ml-[25em] mb-8">
+              Recuerda lo más importante... ¡LA FECHA!
+            </div>
+            {/* Bloque fecha */}
+            <div className="flex items-center justify-center gap-6 mt-4 mb-6">
+              <div className="flex-1 h-px bg-gray-300"></div>
+              <div className="text-center">
+                <div className="text-3xl font-serif">21 de febrero 2026</div>
+                <div className="text-lg mt-1">12:30h</div>
+              </div>
+              <div className="flex-1 h-px bg-gray-300"></div> 
+            </div>
+          
+          <div className="grid gap-6 md:grid-cols-2 mx-6">
             {events.map((event, index) => (
-              <Card key={index} className="shadow-soft hover:shadow-elegant transition-all duration-300 group">
+              <Card key={index} className="shadow-soft hover:shadow-elegant transition-all duration-300 group rounded-none">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl group-hover:text-romantic transition-colors">
+                    <CardTitle className="text-xxl group-hover:text-romantic transition-colors">
                       {event.title}
                     </CardTitle>
                     <div className="flex items-center text-romantic font-medium">
@@ -75,6 +100,7 @@ export const WeddingDetails = () => {
                     </div>
                   </div>
                 </CardHeader>
+                <div className="flex-1 h-px bg-gray-300 mx-10"></div> 
                 <CardContent className="space-y-3">
                   <div>
                     <h4 className="font-medium text-foreground mb-1">{event.location}</h4>
@@ -86,11 +112,21 @@ export const WeddingDetails = () => {
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {event.description}
                   </p>
+                  <Button  size="xl" className="group uppercase rounded-none mx-auto">
+                    Ver en mapa
+                  </Button>
                 </CardContent>
+                
               </Card>
             ))}
           </div>
         </div>
+
+
+      <div className="max-w-6xl mx-auto" >
+        
+
+        
 
         {/* Additional Details */}
         <div>
