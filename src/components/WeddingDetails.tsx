@@ -2,22 +2,32 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MapPin, Clock, Camera, Music, Gift } from "lucide-react";
 import tailandia from "@/assets/Tailandia.png";
 import { Button } from "@/components/ui/button";
+import { MapDialog } from "@/components/MapDialog";
+import { useState } from "react";
 
 export const WeddingDetails = () => {
+  const [selectedLocation, setSelectedLocation] = useState<{
+    title: string;
+    address: string;
+    coordinates: [number, number];
+  } | null>(null);
+
   const events = [
     {
       title: "Ceremonia",
       time: "12:30",
       location: "Parroquia del Inmaculado Corazón de María",
       address: "Calle Ferraz 74",
-      description: "La ceremonia religiosa donde uniremos nuestras vidas"
+      description: "La ceremonia religiosa donde uniremos nuestras vidas",
+      coordinates: [40.4319, -3.7126] as [number, number] // Madrid coordinates - update with real ones
     },
     {
       title: "Celebración",
       time: "15:00",
       location: "La Cañada de Mónico",
       address: "Avenida de los Rosales 456",
-      description: "Brindis y aperitivos en un ambiente íntimo"
+      description: "Brindis y aperitivos en un ambiente íntimo",
+      coordinates: [40.4319, -3.7026] as [number, number] // Madrid coordinates - update with real ones
     }
   ];
 
@@ -112,7 +122,15 @@ export const WeddingDetails = () => {
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {event.description}
                   </p>
-                  <Button  size="xl" className="group uppercase rounded-none mx-auto">
+                  <Button 
+                    size="xl" 
+                    className="group uppercase rounded-none mx-auto"
+                    onClick={() => setSelectedLocation({
+                      title: event.location,
+                      address: event.address,
+                      coordinates: event.coordinates
+                    })}
+                  >
                     Ver en mapa
                   </Button>
                 </CardContent>
@@ -170,6 +188,14 @@ export const WeddingDetails = () => {
           </Card>
         </div>
       </div>
+
+      <MapDialog
+        isOpen={!!selectedLocation}
+        onClose={() => setSelectedLocation(null)}
+        title={selectedLocation?.title || ""}
+        address={selectedLocation?.address || ""}
+        coordinates={selectedLocation?.coordinates || [0, 0]}
+      />
     </section>
   );
 };
