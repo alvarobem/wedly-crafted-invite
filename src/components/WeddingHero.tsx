@@ -34,7 +34,11 @@ export const WeddingHero = () => {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-          <Button  size="xl" className="group uppercase rounded-none">
+          <Button  size="xl" 
+            className="group uppercase rounded-none"
+            onClick={() => {
+              document.getElementById("confirmation")?.scrollIntoView({ behavior: "smooth" });
+            }}>
             Confirmar tu Asistencia
           </Button>
         </div>

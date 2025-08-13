@@ -232,19 +232,18 @@ export const RSVPForm = () => {
     const currentGuest = guestData[currentStep];
     
     return (
-      <section className="py-20 px-4 bg-gradient-elegant">
+      <section className="py-10 px-4 bg-gradient-elegant color-blue w-screen">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <Heart className="w-12 h-12 text-romantic mx-auto mb-4" />
             <h2 className="text-4xl font-light text-foreground mb-4">
-              Confirmación de Asistencia
+              Confirma tu asistencia
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-muted-foreground text-white">
               Paso {currentStep + 1} de {guestData.length}: {currentGuest.name}
             </p>
           </div>
 
-          <Card className="shadow-soft">
+          <Card className="shadow-sof">
             <CardHeader>
               <CardTitle>Información de {currentGuest.name}</CardTitle>
               <CardDescription>
@@ -254,7 +253,7 @@ export const RSVPForm = () => {
             <CardContent className="space-y-6">
               {/* Attendance */}
               <div className="space-y-2">
-                <Label className="text-base font-medium">¿Asistirá {currentGuest.name} a la boda?</Label>
+                <Label className="text-base font-medium ">¿Asistirá {currentGuest.name} a la boda?</Label>
                 <RadioGroup
                   value={currentGuest.attending ? "yes" : "no"}
                   onValueChange={(value) => 
@@ -264,13 +263,13 @@ export const RSVPForm = () => {
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id={`attending-yes-${currentGuest.id}`} />
-                    <Label htmlFor={`attending-yes-${currentGuest.id}`}>
+                    <Label htmlFor={`attending-yes-${currentGuest.id}`} >
                       Sí, asistiré
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="no" id={`attending-no-${currentGuest.id}`} />
-                    <Label htmlFor={`attending-no-${currentGuest.id}`}>
+                    <Label htmlFor={`attending-no-${currentGuest.id}`} >
                       No asistiré
                     </Label>
                   </div>
@@ -447,9 +446,11 @@ export const RSVPForm = () => {
             <Button 
               variant="outline" 
               onClick={prevStep}
+              className="rounded-none"
+              size="xl"
               disabled={currentStep === 0}
             >
-              <ChevronLeft className="w-4 h-4 mr-2" />
+              <ChevronLeft className="w-4 h-4 mr-2"  />
               Anterior
             </Button>
             
@@ -458,12 +459,11 @@ export const RSVPForm = () => {
             </span>
 
             {currentStep === guestData.length - 1 ? (
-              <Button onClick={handleSubmit} variant="romantic">
-                <Heart className="w-4 h-4 mr-2" />
-                Confirmar Asistencia
+              <Button onClick={handleSubmit}  className="rounded-none" size="xl" variant="secondary">
+                Confirmar
               </Button>
             ) : (
-              <Button onClick={nextStep}>
+              <Button onClick={nextStep} className="rounded-none" size="xl" variant="secondary">
                 Siguiente
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
@@ -475,15 +475,17 @@ export const RSVPForm = () => {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-elegant">
-      <div className="max-w-4xl mx-auto">
+    <section className="py-20 px-4 bg-gradient-elegant color-blue w-screen" id="confirmation">
+      <div className="max-w-4xl mx-auto ">
         <div className="text-center mb-12">
-          <Heart className="w-12 h-12 text-romantic mx-auto mb-4" />
           <h2 className="text-4xl font-light text-foreground mb-4">
-            Confirmación de Asistencia
+            Confirma tu asistencia
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Por favor, busca tu nombre para confirmar tu asistencia antes del 1 de Mayo.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-white">
+            Escribe tu nombre y apellido. Si vas en pareja o familia, aparecerán los datos de todos para confirmar asistencia a la vez.
+          </p>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-white">
+            Cuando le des a CONTINUAR, podrás ir confirmando a cada uno de los asistentes.
           </p>
         </div>
 

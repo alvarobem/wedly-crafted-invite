@@ -126,7 +126,11 @@ All colors MUST be HSL.
 
 
 .color-gray {
-  background-color: #c1b9ab;
+  background-color: #b3afa8;
+}
+
+.color-blue {
+  background-color: #b4c2bb;
 }
 
 .index-box {
