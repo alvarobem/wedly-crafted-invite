@@ -83,8 +83,10 @@ export const WeddingDetails = () => {
         <div className="mb-16 color-gray w-screen -mx-4 pb-8" 
           style={{zIndex:1}}>
 
-            <div className="bg-white -mt-5 px-5 py-3 inline-block relative z-10 mx-auto ml-[25em] mb-8">
-              Recuerda lo más importante... ¡LA FECHA!
+            <div className="flex justify-center">
+              <div className="bg-white -mt-5 px-5 py-3 inline-block relative z-10 mb-8">
+                Recuerda lo más importante... ¡LA FECHA!
+              </div>
             </div>
             {/* Bloque fecha */}
             <div className="flex items-center justify-center gap-6 mt-4 mb-6">
