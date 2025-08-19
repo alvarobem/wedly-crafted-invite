@@ -19,7 +19,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				noto: ['Noto Serif Display'],
+				sans: ['Bodoni Moda','sans-serif'],
+				serif: ['Bodoni Moda']
 			},
 			colors: {
 				border: 'hsl(var(--border))',

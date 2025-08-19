@@ -18,7 +18,7 @@ export const WeddingDetails = () => {
       time: "12:30",
       location: "Parroquia del Inmaculado Corazón de María",
       address: "Calle Ferraz 74, Madrid",
-      description: "La ceremonia religiosa donde uniremos nuestras vidas",
+      description: "",
       coordinates: [40.429183, -3.720136] as [number, number] // Madrid coordinates - update with real ones
     },
     {
@@ -26,7 +26,7 @@ export const WeddingDetails = () => {
       time: "15:00",
       location: "La Cañada de Mónico",
       address: "La Cañada de Mónico, Km. 1,600, M-533, kilometro 1-600, 28211 Peralejo, Madrid",
-      description: "Brindis y aperitivos en un ambiente íntimo",
+      description: "",
       coordinates: [40.539001, -4.128373] as [number, number] // Madrid coordinates - update with real ones
     }
   ];
@@ -52,36 +52,31 @@ export const WeddingDetails = () => {
   return (
     <section className="py-10 px-4 bg-background" id="wedding-details">
 
-      <div className="text-center mb-16 relative">
+      <div className="text-center mb-16 relative py-10">
 
         <div >
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-            Como ya sabéis, este 2025 empezó de la manera más especial que podíamos imaginar y es que empezamos nuevo viaje..
+          <p className="text-xl text-muted-foreground mx-auto text-stone-600">
+            Como ya sabéis, este 2025 empezó de la manera más especial que podíamos imaginar y es que empezamos nuevo viaje...
           </p>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+          <br></br>
+          <p className="text-xl text-muted-foreground mx-auto text-stone-600">
             ¡Nos casamos!
           </p>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+          <br></br>
+          <p className="text-xl text-muted-foreground mx-auto text-stone-600">
             Y nada nos puede hacer más ilusión que compartirlo con vosotros.
           </p>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
+          <br></br>
+          <p className="text-xl text-muted-foreground mx-auto text-stone-600">
             Mientras llega el gran día, os dejamos por aquí toda la información para que no os perdáis nada
           </p>
 
         </div>
 
-        <img
-          src={tailandia}
-          alt="Decoración"
-          className="absolute right-0 bottom-0 sm:w-1/8 md:w-1/3 h-auto pointer-events-none select-none"
-          style={{
-            zIndex: 0,
-            marginBottom: '-7rem',
-          }}
-        />
+        
       </div>
       {/* Timeline */}
-      <div className="mb-16 color-gray w-screen -mx-4 pb-8"
+      <div className="mb-16 color-gray -mx-4 pb-12"
         style={{ zIndex: 1 }}>
 
         <div className="flex justify-center">
@@ -90,37 +85,32 @@ export const WeddingDetails = () => {
           </div>
         </div>
         {/* Bloque fecha */}
-        <div className="flex items-center justify-center gap-6 mt-4 mb-6">
+        <div className="flex items-center justify-center gap-6 mt-4 mb-8">
           <div className="flex-1 h-px bg-gray-300"></div>
           <div className="text-center">
             <div className="text-4xl font-serif">21 de febrero 2026</div>
-            <div className="text-xl mt-1">12:30h</div>
           </div>
           <div className="flex-1 h-px bg-gray-300"></div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 mx-10">
+        <div className="grid gap-6 md:grid-cols-2 mx-10 text-center">
           {events.map((event, index) => (
             <Card key={index} className="shadow-soft hover:shadow-elegant transition-all duration-300 group rounded-none">
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
+                <div className="flex justify-center">
                   <CardTitle className="text-xxl group-hover:text-romantic transition-colors">
-                    {event.title}
+                    {event.title} - {event.time} h
                   </CardTitle>
-                  <div className="flex items-center text-romantic font-medium">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {event.time}
-                  </div>
                 </div>
               </CardHeader>
               <div className="flex-1 h-px bg-gray-300 mx-10"></div>
               <CardContent className="space-y-3">
                 <div className="h-5"></div>
-                <div>
-                  <h4 className="font-medium text-foreground mb-1">{event.location}</h4>
-                  <div className="flex items-start text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 mr-1 mt-0.5 flex-shrink-0 text-romantic" />
-                    <span>{event.address}</span>
+                <div className="mx-auto">
+                  <h4 className="text-lg text-foreground mb-1">{event.location}</h4>
+                  <div className="flex items-center justify-center text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4 mr-1 mt-0.5 text-romantic" />
+                    <span className="">{event.address}</span>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
@@ -128,7 +118,7 @@ export const WeddingDetails = () => {
                 </p>
                 <Button
                   size="xl"
-                  className="group uppercase rounded-none mx-auto"
+                  className="group uppercase rounded-none mx-auto text-stone-600"
                   onClick={() => setSelectedLocation({
                     title: event.location,
                     address: event.address,
@@ -144,7 +134,7 @@ export const WeddingDetails = () => {
         </div>
       </div>
 
-      <div className="mb-16  w-screen -mx-4 "
+      <div className="mb-16 -mx-4 "
         style={{ zIndex: 1 }}>
 
         <div className="flex items-center justify-center gap-6 mt-4 mb-10">
@@ -158,7 +148,7 @@ export const WeddingDetails = () => {
         <div className="grid gap-6 md:grid-cols-2 mx-10">
           <Card key="bus" className="shadow-soft hover:shadow-elegant transition-all duration-300 group rounded-none">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-center">
                 <CardTitle className="text-xxl group-hover:text-romantic transition-colors">
                   En autobús
                 </CardTitle>
@@ -167,19 +157,26 @@ export const WeddingDetails = () => {
             <div className="flex-1 h-px bg-gray-300 mx-10"></div>
             <CardContent className="space-y-3">
               <div className="h-5"></div>
-              <p className="text-l text-muted-foreground leading-relaxed">
-                Pondremos autobuses de la Iglesia a la finca para que solo os ocupéis de disfrutar al máximo. La vuelta se hará en un solo turno con destino Móstoles y Moncloa.
-              </p>
-              <p className="text-l text-muted-foreground leading-relaxed">
-                ¿Necesitas autobús para ir de Móstoles a la Iglesia?
-              </p>
-              <CirclePlus className="flex-shrink-0 text-romantic"/>
+              <div className="">
+                <p className="text-lg text-muted-foreground leading-relaxed text-center text-stone-800">
+                  Pondremos autobuses de la Iglesia a la finca para que solo os ocupéis de disfrutar al máximo. La vuelta se hará en un solo turno con destino Móstoles y Moncloa.
+                </p>
+                <br/>
+                <p className="text-lg text-muted-foreground leading-relaxed text-center">
+                  ¿Necesitas autobús para ir de Móstoles a la Iglesia?
+                </p>
+                <div className="flex items-center justify-center">
+                  <CirclePlus className="flex-shrink-0  text-stone-400"/>
+                </div>
+                
+              </div>
+              
             </CardContent>
           </Card>
 
           <Card key="coche" className="shadow-soft hover:shadow-elegant transition-all duration-300 group rounded-none">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-center">
                 <CardTitle className="text-xxl group-hover:text-romantic transition-colors">
                   En coche
                 </CardTitle>
@@ -188,12 +185,12 @@ export const WeddingDetails = () => {
             <div className="flex-1 h-px bg-gray-300 mx-10"></div>
             <CardContent className="space-y-3">
               <div className="h-5"></div>
-              <p className="text-l text-muted-foreground leading-relaxed">
-                Hay parking subterráneo junto a la iglesia,
+              <p className="text-lg text-muted-foreground leading-relaxed text-center text-stone-800">
+                Hay parking subterráneo junto a la iglesia.
               </p>
               <Button
                   size="lg"
-                  className="group uppercase rounded-none mx-auto"
+                  className="group uppercase rounded-none mx-auto flex items-center text-stone-600"
                   onClick={() => setSelectedLocation({
                     title: "Parking Iglesia",
                     address: "C. del Marqués de Urquijo, 20",
@@ -202,7 +199,7 @@ export const WeddingDetails = () => {
                 >
                   Ver en mapa
                 </Button>
-              <p className="text-l text-muted-foreground leading-relaxed">
+              <p className="text-lg text-muted-foreground leading-relaxed text-center">
                 La finca cuenta con parking amplio para todo el que quiera ir en coche.
               </p>
             </CardContent>
@@ -217,6 +214,9 @@ export const WeddingDetails = () => {
         address={selectedLocation?.address || ""}
         coordinates={selectedLocation?.coordinates || [0, 0]}
       />
+      
     </section>
+
+    
   );
 };

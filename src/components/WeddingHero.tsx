@@ -27,19 +27,19 @@ export const WeddingHero = () => {
         </div>
         
         <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
-          <div className="flex items-center justify-center gap-3 text-black/90 mb-8">
-            <Calendar className="w-6 h-6 text-gold" />
-            <span className="text-lg md:text-xl font-light">15 de Junio, 2024</span>
+          <div className="flex items-center justify-center ">
+            
+            <span className="text-3xl font-light text-stone-600">21 de febrero de 2026</span>
           </div>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
           <Button  size="xl" 
-            className="group uppercase rounded-none"
+            className="group uppercase rounded-none text-stone-600"
             onClick={() => {
               document.getElementById("confirmation")?.scrollIntoView({ behavior: "smooth" });
             }}>
-            Confirmar tu Asistencia
+            Confirma tu asistencia
           </Button>
         </div>
       </div>

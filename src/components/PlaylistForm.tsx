@@ -101,8 +101,11 @@ const PlaylistForm = () => {
           disabled={isLoading} 
           className="w-full"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Añadir a la Playlist
+          <Plus className="h-4 w-4 mr-2 text-stone-600" />
+          <p className='text-stone-600'>
+            Añadir a la Playlist
+          </p>
+          
         </Button>
       </CardContent>
     </Card>

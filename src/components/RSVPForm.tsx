@@ -233,12 +233,16 @@ export const RSVPForm = () => {
     
     return (
       <section className="py-10 px-4 bg-gradient-elegant color-blue w-screen">
+        <div className="flex items-center justify-center gap-6 mb-10">
+          <div className="flex-1 h-px bg-white"></div>
+          <div className="text-center">
+            <div className="text-3xl font-serif text-stone-800">Confirma tu asistencia</div>
+          </div>
+          <div className="flex-1 h-px bg-white"></div>
+        </div>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-light text-foreground mb-4">
-              Confirma tu asistencia
-            </h2>
-            <p className="text-lg text-muted-foreground text-white">
+            <p className="text-lg text-muted-foreground text-stone-600">
               Paso {currentStep + 1} de {guestData.length}: {currentGuest.name}
             </p>
           </div>
@@ -459,11 +463,11 @@ export const RSVPForm = () => {
             </span>
 
             {currentStep === guestData.length - 1 ? (
-              <Button onClick={handleSubmit}  className="rounded-none" size="xl" variant="secondary">
+              <Button onClick={handleSubmit}  className="rounded-none bg-stone-400 text-white" size="xl" variant="secondary">
                 Confirmar
               </Button>
             ) : (
-              <Button onClick={nextStep} className="rounded-none" size="xl" variant="secondary">
+              <Button onClick={nextStep} className="rounded-none bg-stone-400 text-white" size="xl" variant="secondary">
                 Siguiente
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
@@ -475,26 +479,34 @@ export const RSVPForm = () => {
   }
 
   return (
-    <section className="py-20 px-4 bg-gradient-elegant color-blue w-screen" id="confirmation">
+    <section className="py-10 color-blue" id="confirmation">
+      <div className="flex items-center justify-center gap-6 mb-10">
+        <div className="flex-1 h-px bg-white"></div>
+        <div className="text-center">
+          <div className="text-3xl font-serif text-stone-800">Confirma tu asistencia</div>
+        </div>
+        <div className="flex-1 h-px bg-white"></div>
+      </div>
       <div className="max-w-4xl mx-auto ">
+        
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-light text-foreground mb-4">
-            Confirma tu asistencia
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-white">
+          <p className="text-lg text-muted-foreground mx-auto text-stone-700">
             Escribe tu nombre y apellido. Si vas en pareja o familia, aparecerán los datos de todos para confirmar asistencia a la vez.
           </p>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-white">
+          <br/>
+          <p className="text-lg text-muted-foreground  mx-auto text-stone-700">
             Cuando le des a CONTINUAR, podrás ir confirmando a cada uno de los asistentes.
           </p>
         </div>
 
         {/* Search Form */}
-        <Card className="shadow-soft">
+        <Card className="shadow-soft text-xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="w-5 h-5 text-romantic" />
-              Buscar Invitación
+               <p className="text-2xl">
+                Buscar invitación
+              </p>
             </CardTitle>
             <CardDescription>
               Escribe tu nombre para encontrar tu invitación (mínimo 3 caracteres)
@@ -558,7 +570,7 @@ export const RSVPForm = () => {
                   {selectedGroup && (
                     <Button 
                       onClick={startWizard}
-                      className="w-full"
+                      className="w-full text-stone-600"
                       size="lg"
                       disabled={!selectedGroup}
                     >

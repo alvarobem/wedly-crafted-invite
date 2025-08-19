@@ -81,7 +81,7 @@ const Auth = () => {
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
-              <TabsTrigger value="signup">Registrarse</TabsTrigger>
+              {/*<TabsTrigger value="signup">Registrarse</TabsTrigger>*/}
             </TabsList>
             
             <TabsContent value="signin">
@@ -112,7 +112,7 @@ const Auth = () => {
                 </Button>
               </form>
             </TabsContent>
-
+            {/** 
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
@@ -141,6 +141,7 @@ const Auth = () => {
                 </Button>
               </form>
             </TabsContent>
+            */}
           </Tabs>
         </CardContent>
       </Card>

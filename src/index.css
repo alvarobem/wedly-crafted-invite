@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,7 +10,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --primary-color: 150 10.3% 73.3%;
+    --primary-color: 149, 25%, 90%;
     --background: 355 25% 97%;
     --foreground: 345 15% 15%;
 
@@ -120,17 +120,17 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: noto;
+    
   }
 }
 
 
 .color-gray {
-  background-color: #b3afa8;
+  background-color: hsl(38, 15%, 92%);
 }
 
 .color-blue {
-  background-color: #b4c2bb;
+  background-color: hsl(149, 25%, 90%);
 }
 
 .index-box {
