@@ -489,7 +489,7 @@ export const RSVPForm = () => {
       </div>
       <div className="max-w-4xl mx-auto ">
         
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 sm:mx-6">
           <p className="text-lg text-muted-foreground mx-auto text-stone-700">
             Escribe tu nombre y apellido. Si vas en pareja o familia, aparecerán los datos de todos para confirmar asistencia a la vez.
           </p>

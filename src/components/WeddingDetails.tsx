@@ -1,9 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Clock, Camera, Music, Gift, CirclePlus } from "lucide-react";
-import tailandia from "@/assets/Tailandia.png";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin, Camera, Music, Gift, CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MapDialog } from "@/components/MapDialog";
 import { useState } from "react";
+import { Popover, PopoverTrigger } from "./ui/popover";
+import { PopoverContent } from "@radix-ui/react-popover";
 
 export const WeddingDetails = () => {
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -159,14 +160,45 @@ export const WeddingDetails = () => {
               <div className="h-5"></div>
               <div className="">
                 <p className="text-lg text-muted-foreground leading-relaxed text-center text-stone-800">
-                  Pondremos autobuses de la Iglesia a la finca para que solo os ocupéis de disfrutar al máximo. La vuelta se hará en un solo turno con destino Móstoles y Moncloa.
+                  Pondremos autobuses de la Iglesia a la finca para que solo os preocupéis de disfrutar al máximo. La vuelta se hará en un solo turno con destino Móstoles y Moncloa al finalizar la fiesta.
                 </p>
                 <br/>
                 <p className="text-lg text-muted-foreground leading-relaxed text-center">
                   ¿Necesitas autobús para ir de Móstoles a la Iglesia?
                 </p>
                 <div className="flex items-center justify-center">
-                  <CirclePlus className="flex-shrink-0  text-stone-400"/>
+                  
+                  <Popover>
+                    <PopoverTrigger>
+                      <CirclePlus className="flex-shrink-0  text-stone-400"/>
+                    </PopoverTrigger>
+                    <PopoverContent side="top" className="bg-popover text-popover-foreground border shadow-md p-5 mb-3">
+                      <div className="space-y-2 bg-white">
+                        <p className="text-sm text-muted-foreground text-center">
+                          En función de la cantidad de invitados que necesiten el
+                        </p>
+                        <p className="text-sm text-muted-foreground text-center">
+                          traslado desde Móstoles a la iglesia habilitaremos este autobús.
+                          </p>
+                        <br/>
+                        <p className="text-sm text-muted-foreground text-center">
+                          Haznos saber en el formulario de confirmación si necesitas
+                        </p>
+                        <p className="text-sm text-muted-foreground text-center">
+                          este transporte indicando salida desde Móstoles. 
+                        </p>
+                        <br/>
+                        <p className="text-sm text-muted-foreground text-center">
+                         Os confirmaremos con suficiente antelación si finalmente dispondremos de 
+                        </p>
+                        <p className="text-sm text-muted-foreground text-center">
+                        este transporte o no. 
+                        </p>
+
+                      </div>
+                    </PopoverContent>
+                    
+                  </Popover>
                 </div>
                 
               </div>

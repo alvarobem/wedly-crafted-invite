@@ -55,7 +55,7 @@ const Index = () => {
             </div>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
-          <div className="text-center items-center justify-center">
+          <div className="text-center items-center justify-center sm:mx-10">
             <p className="text-xl">
               Pero si queréis tener un detalle con nosotros para esta nueva etapa, os dejamos el número de cuenta:
             </p>
