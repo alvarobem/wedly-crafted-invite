@@ -37,23 +37,23 @@ const Index = () => {
    {
       id: 'item-1',
       title: '¿A qué hora terminará la fiesta?',
-      content: <p>La fiesta terminará alrededor de las 23:00 h, aunque prometemos que habrá tiempo de sobra para bailar, reír y brindar.</p>
+      content: <p>La fiesta terminará alrededor de las 23:00 h, aunque prometemos que habrá tiempo de sobra para darlo todo en la pista.</p>
     },
     {
       id: 'item-2',
       title: '¿Qué hago si quiero ir con un acompañante que no aparece en el formulario de confirmación?',
-      content: <p>¡Nos encanta que quieras compartir el día con alguien especial! Pero necesitamos tener controlada la lista de invitados para que todo encaje a la perfección. Escríbenos directamente y vemos juntos cómo solucionarlo.</p>
+      content: <p>¡Nos encanta que quieras compartir el día con alguien especial! Escríbenos directamente y vemos juntos cómo solucionarlo, para tener controlada la lista de invitados y que todo encaje a la perfección.</p>
     },
     {
       id: 'item-3',
-      title: 'La finca tiene jardín, ¿habrá disponible cubretacones?',
-      content: <p>¡Sí! Tendremos cubretacones disponibles para que puedas pasear y bailar por el jardín sin preocupaciones. </p>
+      title: 'La finca tiene jardín, ¿habrá cubretacones?',
+      content: <p>¡Sí! Tendremos cubretacones para que puedas pasear y bailar por el jardín sin preocupaciones. </p>
     },
     {
       id: 'item-4',
       title: '¿Dondé me recogerá y dejará el autobús?',
       content: (<> 
-        <p>Tendremos dos puntos de recogida y regreso por eso es muy importante que nos hagas saber en el formulario que servicio vas a usar:</p>
+        <p>Tendremos dos puntos de recogida y regreso por eso es muy importante que nos hagas saber en el formulario qué servicio vas a usar:</p>
         <br/>
         <ul className="list-disc ml-8">
           <li>Salida desde Móstoles (para ir a la iglesia)<span className="text-xs font-black">*</span>: Calle Abogados de Atocha 1</li>
