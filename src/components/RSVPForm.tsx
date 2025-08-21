@@ -232,7 +232,7 @@ export const RSVPForm = () => {
     const currentGuest = guestData[currentStep];
     
     return (
-      <section className="py-10 px-4 bg-gradient-elegant color-blue w-screen">
+      <section className="py-10 px-4 bg-gradient-elegant color-blue">
         <div className="flex items-center justify-center gap-6 mb-10">
           <div className="flex-1 h-px bg-white"></div>
           <div className="text-center">
@@ -446,7 +446,7 @@ export const RSVPForm = () => {
           </Card>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center mt-8">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 justify-between items-center mt-8 text-stone-600">
             <Button 
               variant="outline" 
               onClick={prevStep}
@@ -458,7 +458,7 @@ export const RSVPForm = () => {
               Anterior
             </Button>
             
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground text-center justify-center text-stone-600">
               {currentStep + 1} de {guestData.length}
             </span>
 
@@ -489,7 +489,7 @@ export const RSVPForm = () => {
       </div>
       <div className="max-w-4xl mx-auto ">
         
-        <div className="text-center mb-12 sm:mx-6">
+        <div className="text-center mb-12 mx-6">
           <p className="text-lg text-muted-foreground mx-auto text-stone-700">
             Escribe tu nombre y apellido. Si vas en pareja o familia, aparecerán los datos de todos para confirmar asistencia a la vez.
           </p>

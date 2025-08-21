@@ -80,7 +80,7 @@ export const WeddingDetails = () => {
       <div className="mb-16 color-gray -mx-4 pb-12"
         style={{ zIndex: 1 }}>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center text-center">
           <div className="bg-white -mt-5 px-5 py-3 inline-block relative z-10 mb-8 text-3xl">
             Recuerda lo más importante... ¡LA FECHA!
           </div>
@@ -136,7 +136,7 @@ export const WeddingDetails = () => {
       </div>
 
       <div className="mb-16 -mx-4 "
-        style={{ zIndex: 1 }}>
+        style={{ zIndex: 1 }} id="como-llegar">
 
         <div className="flex items-center justify-center gap-6 mt-4 mb-10">
           <div className="flex-1 h-px bg-gray-300"></div>
@@ -172,29 +172,19 @@ export const WeddingDetails = () => {
                     <PopoverTrigger>
                       <CirclePlus className="flex-shrink-0  text-stone-400"/>
                     </PopoverTrigger>
-                    <PopoverContent side="top" className="bg-popover text-popover-foreground border shadow-md p-5 mb-3">
+                    <PopoverContent side="top" className="bg-popover text-popover-foreground border shadow-md p-5 mb-3 w-70 max-w-[90vw] md:max-w-[40vw]">
                       <div className="space-y-2 bg-white">
                         <p className="text-sm text-muted-foreground text-center">
-                          En función de la cantidad de invitados que necesiten el
-                        </p>
-                        <p className="text-sm text-muted-foreground text-center">
-                          traslado desde Móstoles a la iglesia habilitaremos este autobús.
-                          </p>
-                        <br/>
-                        <p className="text-sm text-muted-foreground text-center">
-                          Haznos saber en el formulario de confirmación si necesitas
-                        </p>
-                        <p className="text-sm text-muted-foreground text-center">
-                          este transporte indicando salida desde Móstoles. 
+                          En función de la cantidad de invitados que necesiten el traslado desde Móstoles a la iglesia habilitaremos este autobús.
                         </p>
                         <br/>
                         <p className="text-sm text-muted-foreground text-center">
-                         Os confirmaremos con suficiente antelación si finalmente dispondremos de 
+                          Haznos saber en el formulario de confirmación si necesitas este transporte indicando salida desde Móstoles. 
                         </p>
+                        <br/>
                         <p className="text-sm text-muted-foreground text-center">
-                        este transporte o no. 
+                         Os confirmaremos con suficiente antelación si finalmente dispondremos de este transporte o no. 
                         </p>
-
                       </div>
                     </PopoverContent>
                     

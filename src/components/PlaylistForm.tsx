@@ -99,7 +99,7 @@ const PlaylistForm = () => {
         <Button 
           onClick={addSong} 
           disabled={isLoading} 
-          className="w-full"
+          className="w-full rounded-none"
         >
           <Plus className="h-4 w-4 mr-2 text-stone-600" />
           <p className='text-stone-600'>

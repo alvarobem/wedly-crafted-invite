@@ -34,12 +34,12 @@ export const WeddingHero = () => {
       <div className="w-20 h-px bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-4" />
     </div>
     
-    <div className="mb-12 ">
+    <div className="mb-[6em] ">
       <span className="text-xl font-light text-stone-600">21 de febrero de 2026</span>
     </div>
     
     <Button size="lg" 
-            className="mb-5 group uppercase rounded-none text-stone-600 w-full max-w-sm mx-auto"
+            className="mb-5 group uppercase rounded-none text-stone-600 w-full max-w-sm mx-auto hidden"
             onClick={() => {
               document.getElementById("confirmation")?.scrollIntoView({ behavior: "smooth" });
             }}>
@@ -62,7 +62,7 @@ export const WeddingHero = () => {
     
     <div className="flex flex-col sm:flex-row gap-4 justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
       <Button size="xl" 
-              className="group uppercase rounded-none text-stone-600"
+              className="group uppercase rounded-none text-stone-600 hover:bg-stone-100 hidden"
               onClick={() => {
                 document.getElementById("confirmation")?.scrollIntoView({ behavior: "smooth" });
               }}>
